@@ -1,5 +1,4 @@
-# final_project
-ชื่อ เพ็ญพิชชา เพ็ชรสิงห์ รหัสนิสิต 6814500175
+# final_project_report
 
 ภาควิชาวิศวกรรมคอมพิวเตอร์
 คณะวิศวกรรมศาสตร์
@@ -45,7 +44,7 @@ NVIDIA Corporation (NVDA) ในปัจจุบันได้กลายเ
 
 
 
-
+![Image](https://github.com/user-attachments/assets/46860a44-b786-4cbb-a996-eae29d86bdd5)
 
 ที่มา : https://www.nerd-data.com/deep_learning_lstm/
 
@@ -76,6 +75,8 @@ import dataset จาก https://www.kaggle.com/ โดยเราใช้ dat
 import opendatasets as od
 od.download("https://www.kaggle.com/datasets/meharshanali/nvidia-stocks-data-2025?select=NVDA.csv")
 data = pd.read_csv("/content/nvidia-stocks-data-2025/NVDA.csv")
+
+![Image](https://github.com/user-attachments/assets/d9e3b53c-2e2b-4fe9-9a6c-f70a06dd51bb)
 
 เลือกข้อมูลที่จะใช้ โดยเลือกตั้งแต่ 2021 – 2025 ที่มีข้อมูลล่าสุด และตรวจสอบว่าข้อมูลครบถ้วน ไม่มีข้อมูลที่ขาดหายไป
 # เลือกเฉพาะข้อมูลตั้งแต่ 2022 ถึง 2025
@@ -212,14 +213,14 @@ for epoch in range(num_epochs):
 ค่า Epoch และ Loss ที่ได้จากการ train
  
 
-
+<img width="309" height="220" alt="Image" src="https://github.com/user-attachments/assets/e1573178-a4e5-4733-a913-88e0d8694b8f" />
 
 กราฟ Loss ในแต่ละรอบ Epoch
 
 
 
 
-
+<img width="884" height="588" alt="Image" src="https://github.com/user-attachments/assets/78e50647-0a7d-444b-b113-d9f7ebfd9e0f" />
 
 
 
@@ -271,7 +272,7 @@ R²   : 0.4264
 
 
 
-
+<img width="1325" height="643" alt="Image" src="https://github.com/user-attachments/assets/5db354f0-6ae9-4ad2-a0fa-412f6c1ed9a2" />
 
 
 แหล่งข้อมูลอ้างอิง
