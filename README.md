@@ -1,7 +1,6 @@
 # final_project
 ชื่อ เพ็ญพิชชา เพ็ชรสิงห์ รหัสนิสิต 6814500175
 
-![Image](https://github.com/user-attachments/assets/7f5f1461-4f31-4f2b-b01b-b5835c08718a)
 ภาควิชาวิศวกรรมคอมพิวเตอร์
 คณะวิศวกรรมศาสตร์
 มหาวิทยาลัยเกษตรศาสตร์
@@ -26,7 +25,7 @@ NVIDIA Corporation (NVDA) ในปัจจุบันได้กลายเ
 
 
 
-
+![Image](https://github.com/user-attachments/assets/7f5f1461-4f31-4f2b-b01b-b5835c08718a)
 
 ที่มา : https://www.bangkokbiznews.com/world/1205715
 
