@@ -58,6 +58,7 @@ NVIDIA Corporation (NVDA) ในปัจจุบันได้กลายเ
 bias = 1 
 64+1 = 65	-
 
+'''
 Code PyTorch
 import libraries ที่ใช้
 import torch
@@ -69,6 +70,7 @@ import matplotlib.pyplot as plt
 from sklearn.preprocessing import MinMaxScaler
 import torch.optim as optim
 import torch.utils.data as data
+'''
 
 import dataset จาก https://www.kaggle.com/ โดยเราใช้ dataset NVIDIA Stocks Data 2025 โดยข้อมูลประกอบด้วยข้อมูลหุ้น ตั้งแต่ปี 1999 - 2025
 #import data API key from kaggle
