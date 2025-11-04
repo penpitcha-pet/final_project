@@ -59,6 +59,7 @@ bias = 1
 64+1 = 65	-
 
 '''
+
 Code PyTorch
 import libraries ที่ใช้
 import torch
