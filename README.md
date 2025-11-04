@@ -57,8 +57,7 @@ NVIDIA Corporation (NVDA) ในปัจจุบันได้กลายเ
 5	Linear	(batch, 64)	(batch, 1)	weight = 64 × 1 = 64
 bias = 1 
 64+1 = 65	-
-
-'''
+```
 
 Code PyTorch
 import libraries ที่ใช้
@@ -71,14 +70,15 @@ import matplotlib.pyplot as plt
 from sklearn.preprocessing import MinMaxScaler
 import torch.optim as optim
 import torch.utils.data as data
-'''
+```
 
 import dataset จาก https://www.kaggle.com/ โดยเราใช้ dataset NVIDIA Stocks Data 2025 โดยข้อมูลประกอบด้วยข้อมูลหุ้น ตั้งแต่ปี 1999 - 2025
+```
 #import data API key from kaggle
 import opendatasets as od
 od.download("https://www.kaggle.com/datasets/meharshanali/nvidia-stocks-data-2025?select=NVDA.csv")
 data = pd.read_csv("/content/nvidia-stocks-data-2025/NVDA.csv")
-
+```
 ![Image](https://github.com/user-attachments/assets/d9e3b53c-2e2b-4fe9-9a6c-f70a06dd51bb)
 
 เลือกข้อมูลที่จะใช้ โดยเลือกตั้งแต่ 2021 – 2025 ที่มีข้อมูลล่าสุด และตรวจสอบว่าข้อมูลครบถ้วน ไม่มีข้อมูลที่ขาดหายไป
@@ -103,10 +103,11 @@ features = ['Open', 'High', 'Low', 'Close', 'Volume']
 data = df_filtered[features]
 
 MinMaxScaler เพื่อปรับขนาดข้อมูลราคาหุ้นให้อยู่ในช่วง 0–1 ก่อนนำเข้า LSTM ช่วยให้โมเดลเรียนรู้ได้เร็วขึ้น เสถียรกว่า และลดปัญหา gradient หาย โดยเฉพาะเมื่อข้อมูลราคาหุ้นมีสเกลแตกต่างกันมาก
+```
 #apply MinMax scaler
 price_scaler = MinMaxScaler(feature_range=(0,1))
 data_scaled = price_scaler.fit_transform(np.array(data)).reshape(-1,1)
-
+```
 แบ่งข้อมูลเป็น train และ test โดยแบ่งข้อมูล train เป็น 80%
 #แบ่งข้อมูล train/test
 train = int(int(len(data))*0.8)
@@ -114,6 +115,7 @@ test = len(data) - train
 train_data , test_data = data[0:train,:],data[train:len(data),:1]
 
 แปลงข้อมูลราคาหุ้นให้เป็นชุดข้อมูลแบบลำดับเวลา (time-series sequences) โดยใช้ time_step วันย้อนหลังเพื่อพยากรณ์ราคาวันถัดไป ข้อมูลที่ได้จะถูกจัดให้มีมิติ (batch_size, time_step, features) สำหรับนำเข้าโมเดล LSTM ได้โดยตรง
+```
 #convert array of values into a dataset matrix
 def data_set(dataset, time_step=1):
   data_x, data_y = [], []
@@ -138,7 +140,7 @@ x_train , y_train = data_set(train_data, time_step)
 x_test , y_test = data_set(test_data, time_step)
 
 print(x_train.shape, y_train.shape)
-
+```
 โมเดลนี้ประกอบด้วย 2 ส่วนหลัก:
 1. LSTM layer สำหรับเรียนรู้ลำดับเวลา (Temporal dependencies)
 2. Fully Connected (Linear) layer สำหรับแปลงผลลัพธ์ของ LSTM เป็นค่าพยากรณ์สุดท้าย
@@ -148,6 +150,7 @@ print(x_train.shape, y_train.shape)
 •	dropout=0.3 ลด overfitting โดยสุ่มปิด neuron บางส่วนระหว่าง training
 •	self.fc = nn.Sequential(nn.ReLU(), nn.Linear(hidden_size, 1)) สร้าง fully connected layer และ activation function เพื่อแปลง hidden output เป็นค่าทำนายสุดท้าย
 ผลลัพธ์สุดท้ายผ่าน ReLU activation และ linear layer เพื่อทำนายค่าตัวเลขของวันถัดไป
+```
 #define model
 class LSTMmodel(nn.Module):
   def __init__(self, input_size=1, hidden_size=64, num_layers=2, batch_first=True,dropout=0.3):
@@ -159,8 +162,9 @@ class LSTMmodel(nn.Module):
     out, _ = self.lstm(x)
     out = self.fc(out[:,-1,:])
     return out
-
+```
 เลือก Optimizer โดยเลือกใช้ GPU cuda มาใช้ประมวลผลทำให้ประมวลผลได้เร็วมากขึ้น และตั้ง learning rate = 0.001 ใช้ dataloader เพื่อแบ่ง batch 
+```
 #Initialize Model, Loss Function, and Optimizer
 from torch.utils.data import DataLoader, TensorDataset
 import torch
@@ -171,7 +175,7 @@ print("Using device:", device)
 model = LSTMmodel().to(device)  # ใช้ GPU ถ้ามี
 criterion = nn.MSELoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
-
+```
 #ใช้ DataLoader เพื่อแบ่ง batch
 batch_size = 64
 train_dataset = TensorDataset(x_train, y_train)
@@ -179,6 +183,7 @@ train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
 
 
 loop การเทรนโมเดล LSTM ที่ทำให้โมเดลเรียนรู้ความสัมพันธ์ของข้อมูล โดยใช้ Mixed Precision เพื่อลดการใช้หน่วยความจำของ GPU และเพิ่มความเร็วในการคำนวณ โดยใช้ torch.cuda.amp.autocast() และ GradScaler() เพื่อเพิ่มประสิทธิภาพการประมวลผลบน GPU และลดการใช้หน่วยความจำ โดยกระบวนการฝึกดำเนินการทั้งหมด 100 epochs พร้อมเก็บค่า loss เพื่อวิเคราะห์แนวโน้มการเรียนรู้ของโมเดล
+```
 # ใช้ Mixed Precision Training
 scaler = torch.cuda.amp.GradScaler()
 
@@ -212,7 +217,7 @@ for epoch in range(num_epochs):
     # print ทุก 10 epochs
     if (epoch + 1) % 10 == 0:
         print(f"Epoch [{epoch+1}/{num_epochs}]  Loss: {avg_loss:.6f}")
-
+```
 ค่า Epoch และ Loss ที่ได้จากการ train
  
 
@@ -235,6 +240,7 @@ for epoch in range(num_epochs):
 
 
 Evaluate
+```
 #evaluate
 model.eval()
 with torch.no_grad():
@@ -257,7 +263,7 @@ with torch.no_grad():
     mask = torch.abs(y_test) > epsilon  # ใช้เฉพาะค่าที่ไม่ใกล้ศูนย์
     mape = torch.mean(torch.abs((y_test[mask] - pred[mask]) / (y_test[mask] + 1e-8))) * 100
     print("MAPE:", mape.item(), "%")
-
+```
 การวัดค่าเราได้อ้างอิงจากงานวิจัย A Hybrid LSTM-GRU Model for Stock Price Prediction (https://ieeexplore.ieee.org/document/11072109) โดยเลือกใช้ค่า RMSE, MAE และ MAPE โดยได้ค่าดังนี้
 Test Loss: 0.049062665551900864
 RMSE: 0.2215009331703186
